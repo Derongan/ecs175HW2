@@ -319,6 +319,12 @@ void graphics::fillPolygon(float *points, int num)
 		else
 			xmin = points[i * 2];
 
+		//We add to the correct scanline based on the .5
+		//We draw on bottom edge
+		//so if .5 draw on 0. Casting to an int will round this properly
+		//
+		//for ymax if 10.5 instead draw on 10 again a cast to int solves this. This is handled by casting in remove obsolete
+
 		edgeTable[(int)fmin(points[i * 2 + 1], points[(i + 1) * 2 + 1])].add(ymax, xmin, minv, dx, dy);
 	}
 
@@ -338,7 +344,9 @@ void graphics::fillPolygon(float *points, int num)
 		bucket = activeEdgeList.head;
 		while(bucket) {
 			if (parity) {
-				for (int r = last; r < bucket->xmin; r++) {
+				//int r truncates the int. This means the left side is drawn if the edge is directly on the halfway
+				//r<bucket->xmin + 1 will never draw on bucket->xmin if it is passed the .5
+				for (int r = last; r < bucket->xmin + 1; r++) {
 					setPixel(r, i);
 				}
 			}

@@ -48,9 +48,9 @@ void display()
 
 	float B[] = { 50,100.5,150,100.5,100,50,50,100.5 };
 
-	g->fillPolygon(B, 4);
+	//g->fillPolygon(B, 4);
 
-	g->setColor(0, 1.0, 0);
+	g->setColor(1.0, 0, 0);
 
 	//g->strokePolygon(B, 4);
 
