@@ -21,5 +21,4 @@ public:
 	float * getCurrentBuffer();
 	void fillPolygon(float* points, int num);
 	void strokePolygon(float* points, int num);
-
 };
