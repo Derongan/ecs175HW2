@@ -6,9 +6,8 @@
 class graphics
 {
 private:
-	float color[3];
+	float color[4];
 	float *buffer;
-	void bubbleSortPoints(float *points, int num);
 
 public:
 	int width;

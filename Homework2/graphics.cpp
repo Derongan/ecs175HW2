@@ -1,27 +1,5 @@
 #include "graphics.h"
 
-void graphics::bubbleSortPoints(float * points, int num)
-{
-	int newn;
-	do {
-		int newn = 0;
-
-		for (int i = 1; i < num; i++) {
-			if (points[(i - 1) * 2] > points[i * 2]) {
-				float temp = points[i * 2];
-				points[i * 2] = points[(i - 1) * 2];
-				points[(i - 1) * 2] = temp;
-
-				temp = points[i * 2 + 1];
-				points[i * 2 + 1] = points[(i - 1) * 2 + 1];
-				points[(i - 1) * 2 + 1] = temp;
-				newn = i;
-			}
-		}
-		num = newn;
-	} while (num != 0);
-}
-
 graphics::graphics(int width, int height)
 {
 	this->width = width;
@@ -318,35 +296,35 @@ void graphics::fillPolygon(float *points, int num)
 			xmin = points[(i + 1) * 2];
 		else
 			xmin = points[i * 2];
-
-		//We add to the correct scanline based on the .5
-		//We draw on bottom edge
-		//so if .5 draw on 0. Casting to an int will round this properly
-		//
-		//for ymax if 10.5 instead draw on 10 again a cast to int solves this. This is handled by casting in remove obsolete
-
-		edgeTable[(int)fmin(points[i * 2 + 1], points[(i + 1) * 2 + 1])].add(ymax, xmin, minv, dx, dy);
+		int test = (int)ceil((fmin(points[i * 2 + 1], points[(i + 1) * 2 + 1]) - .5));
+		edgeTable[(int)ceil((fmin(points[i * 2 + 1], points[(i + 1) * 2 + 1])-.5))].add(ceil(ymax-.5), xmin, minv, dx, dy);
 	}
+
+	/*for (int i = 0; i < height; i++) {
+		edgeTable[i].print();
+	}*/
 
 	list activeEdgeList = list();
 
 	bool parity = false;
 	Bucket* bucket;
 
-	int last;
+	float last;
+
+	int counterL = 0;
+	int counterR = 0;
 
 	for (i = 0; i < this->height; i++) {
 		activeEdgeList.removeObsolete(i);
 		activeEdgeList.prepend(&edgeTable[i]);
 		activeEdgeList.sort();
-		
 
 		bucket = activeEdgeList.head;
 		while(bucket) {
 			if (parity) {
 				//int r truncates the int. This means the left side is drawn if the edge is directly on the halfway
 				//r<bucket->xmin + 1 will never draw on bucket->xmin if it is passed the .5
-				for (int r = last; r < bucket->xmin + 1; r++) {
+				for (int r = ceilf(last - .5); r+.5 < bucket->xmin; r++) {
 					setPixel(r, i);
 				}
 			}
@@ -355,9 +333,12 @@ void graphics::fillPolygon(float *points, int num)
 
 			bucket->xmin += bucket->minv;
 
+			//counterL += dx;
 			bucket = bucket->next;
 		}
 	}
+
+	delete[] edgeTable;
 }
 
 void graphics::strokePolygon(float * points, int num)
