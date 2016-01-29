@@ -1,5 +1,9 @@
 #pragma once
+#ifndef nullptr
+#define nullptr NULL
+#endif
 #include <stdio.h>
+
 
 struct Bucket
 {
