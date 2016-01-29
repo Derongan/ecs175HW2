@@ -1,5 +1,7 @@
 #include "list.h"
-
+#ifndef nullptr
+#define nullptr NULL
+#endif
 
 
 list::list()
